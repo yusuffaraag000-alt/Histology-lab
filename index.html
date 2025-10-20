@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Veterinary Histology Lab — Explore Animal Tissues</title>
+  <style>
+    :root{
+      --bg:#08050d;
+      --accent1:#ff8fc3;
+      --accent2:#f3b5ff;
+      --muted:#d8cde3;
+      --card:rgba(255,255,255,0.05);
+    }
+
+    html,body{
+      margin:0;
+      height:100%;
+      font-family:"Poppins",sans-serif;
+      background:var(--bg);
+      color:#fff;
+      scroll-behavior:smooth;
+    }
+
+    canvas#bgCanvas{
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      background:radial-gradient(circle at 30% 20%,#14081f,#08050d);
+    }
+
+    header{
+      text-align:center;
+      padding:60px 20px 30px;
+    }
+    header h1{
+      font-size:38px;
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      margin-bottom:10px;
+    }
+    header p{
+      color:var(--muted);
+      font-size:16px;
+      max-width:700px;
+      margin:auto;
+      line-height:1.7;
+    }
+
+    section.article{
+      max-width:900px;
+      margin:auto;
+      padding:40px 20px;
+      background:rgba(255,255,255,0.03);
+      border-radius:20px;
+      backdrop-filter:blur(6px);
+    }
+
+    section.article h2{
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    section.article p{
+      line-height:1.8;
+      color:var(--muted);
+      font-size:15px;
+      margin-bottom:20px;
+    }
+
+    .images-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:20px;
+      margin-top:30px;
+    }
+    .images-grid img{
+      width:100%;
+      border-radius:16px;
+      box-shadow:0 0 25px rgba(255,130,200,0.1);
+      transition:transform .3s;
+    }
+    .images-grid img:hover{transform:scale(1.04)}
+
+    /* === Mind Map Section === */
+    #mindmap-section{
+      padding:80px 20px;
+      text-align:center;
+    }
+    #mindmap{
+      position:relative;
+      width:900px;
+      height:650px;
+      margin:60px auto;
+    }
+
+    .link-line{
+      position:absolute;
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      height:2px;
+      transform-origin:0 50%;
+      opacity:0.4;
+      filter:blur(1px);
+    }
+
+    .node{
+      position:absolute;
+      text-align:center;
+    }
+
+    .bubble{
+      width:140px;
+      height:140px;
+      border-radius:50%;
+      background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.2),rgba(255,255,255,0.05));
+      border:2px solid rgba(255,255,255,0.06);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      box-shadow:0 0 25px rgba(255,130,200,0.2), inset 0 0 15px rgba(255,255,255,0.05);
+      cursor:pointer;
+      transition:.3s;
+    }
+
+    .bubble:hover{
+      transform:scale(1.06);
+      background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.25),rgba(255,255,255,0.07));
+    }
+
+    .bubble strong{
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      font-size:18px;
+      font-weight:600;
+    }
+
+    .node .label{
+      margin-top:10px;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    /* positions */
+    .center{left:50%;top:50%;transform:translate(-50%,-50%)}
+    .pos-top{left:50%;top:10%;transform:translate(-50%,0)}
+    .pos-bottom{left:50%;bottom:10%;transform:translate(-50%,0)}
+    .pos-left{left:10%;top:50%;transform:translate(0,-50%)}
+    .pos-right{right:10%;top:50%;transform:translate(0,-50%)}
+    .pos-tl{left:22%;top:20%}
+    .pos-tr{right:22%;top:20%}
+    .pos-bl{left:22%;bottom:20%}
+    .pos-br{right:22%;bottom:20%}
+
+    footer{
+      text-align:center;
+      padding:40px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    @media(max-width:900px){
+      #mindmap{width:100%;height:500px}
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bgCanvas"></canvas>
+
+  <header>
+    <h1>Veterinary Histology Lab</h1>
+    <p>Discover the microscopic anatomy of animal tissues and organs — bridging biology, pathology, and veterinary medicine.</p>
+  </header>
+
+  <section class="article">
+    <h2>What is Veterinary Histology?</h2>
+    <p>Veterinary histology is the study of animal tissues at the microscopic level. It reveals how cells are organized to form the structural foundation of organs in different species — from domestic mammals and birds to reptiles and aquatic animals. By understanding these microscopic patterns, veterinarians can identify how structure determines function across animal systems.</p>
+
+    <p>In veterinary medicine, histology is not only a fundamental science but also a diagnostic tool. Tissue samples collected from biopsies or postmortem examinations are examined under the microscope to detect inflammation, infection, tumors, or degenerative changes. This makes histology essential for diagnosing diseases and ensuring animal health and welfare.</p>
+
+    <p>Veterinary histologists use advanced techniques like light and electron microscopy, histochemical stains, and immunohistochemistry to visualize tissues with remarkable detail. These methods allow for differentiation of cell types and detection of pathogens, hormones, and enzymes, all critical for accurate veterinary pathology.</p>
+
+    <div class="images-grid">
+      <img src="vet_tissue1.jpg" alt="Epithelial Tissue - Animal">
+      <img src="vet_tissue2.jpg" alt="Muscle Tissue - Animal">
+      <img src="vet_tissue3.jpg" alt="Connective Tissue - Animal">
+      <img src="vet_tissue4.jpg" alt="Nervous Tissue - Animal">
+    </div>
+
+    <p>Animals share the same four fundamental tissue types as humans: epithelial, connective, muscular, and nervous tissue. However, their histological structure can vary by species, reflecting adaptations to environment, diet, and physiology. For example, the avian respiratory system and ruminant digestive tract each display unique histological features suited to their function.</p>
+  </section>
+
+  <section id="mindmap-section">
+    <h2>Explore Animal Body Systems</h2>
+    <div id="mindmap">
+      <div class="node center">
+        <div class="bubble"><strong onclick="go('overview.html')">Animal Body</strong></div>
+        <div class="label">Tissues & Systems</div>
+      </div>
+
+      <div class="node pos-top">
+        <div class="bubble"><strong onclick="go('respiratory.html')">Respiratory</strong></div>
+        <div class="label">Lungs & Air Sacs</div>
+      </div>
+
+      <div class="node pos-bottom">
+        <div class="bubble"><strong onclick="go('immune.html')">Immune</strong></div>
+        <div class="label">Defense Organs</div>
+      </div>
+
+      <div class="node pos-left">
+        <div class="bubble"><strong onclick="go('index3.html')">Digestive</strong></div>
+        <div class="label">GI Tract</div>
+      </div>
+
+      <div class="node pos-right">
+        <div class="bubble"><strong onclick="go('urinary.html')">Urinary</strong></div>
+        <div class="label">Kidneys & Excretion</div>
+      </div>
+
+      <div class="node pos-tl">
+        <div class="bubble"><strong onclick="go('circulatory.html')">Circulatory</strong></div>
+        <div class="label">Heart & Vessels</div>
+      </div>
+
+      <div class="node pos-tr">
+        <div class="bubble"><strong onclick="go('nervous.html')">Nervous</strong></div>
+        <div class="label">Brain & Nerves</div>
+      </div>
+
+      <div class="node pos-bl">
+        <div class="bubble"><strong onclick="go('musculoskeletal.html')">Musculoskeletal</strong></div>
+        <div class="label">Bones & Muscles</div>
+      </div>
+
+      <div class="node pos-br">
+        <div class="bubble"><strong onclick="go('endocrine.html')">Endocrine</strong></div>
+        <div class="label">Glands & Hormones</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 Veterinary Histology Virtual Lab — Faculty of Veterinary Medicine
+  </footer>
+
+  <script>
+    function go(p){ window.location.href=p; }
+
+    function connectNodes(){
+      const map=document.getElementById("mindmap");
+      const nodes=map.querySelectorAll(".node");
+      const center=map.querySelector(".center .bubble").getBoundingClientRect();
+      const rect=map.getBoundingClientRect();
+      nodes.forEach(n=>{
+        if(n.classList.contains("center")) return;
+        const b=n.querySelector(".bubble").getBoundingClientRect();
+        const line=document.createElement("div");
+        line.className="link-line";
+        const x1=center.left+center.width/2-rect.left;
+        const y1=center.top+center.height/2-rect.top;
+        const x2=b.left+b.width/2-rect.left;
+        const y2=b.top+b.height/2-rect.top;
+        const dx=x2-x1, dy=y2-y1;
+        const length=Math.sqrt(dx*dx+dy*dy);
+        const angle=Math.atan2(dy,dx)*(180/Math.PI);
+        line.style.width=length+"px";
+        line.style.left=x1+"px";
+        line.style.top=y1+"px";
+        line.style.transform=`rotate(${angle}deg)`;
+        map.appendChild(line);
+      });
+    }
+
+    window.addEventListener("load",connectNodes);
+
+    // glowing spheres background
+    const c=document.getElementById("bgCanvas");
+    const ctx=c.getContext("2d");
+    let w,h;
+    function resize(){
+      w=window.innerWidth;h=window.innerHeight;
+      c.width=w;c.height=h;
+    }
+    window.addEventListener("resize",resize);
+    resize();
+
+    const balls=[];
+    for(let i=0;i<25;i++){
+      balls.push({
+        x:Math.random()*w,
+        y:Math.random()*h,
+        r:10+Math.random()*30,
+        dx:(Math.random()-0.5)*0.8,
+        dy:(Math.random()-0.5)*0.8,
+        alpha:0.2+Math.random()*0.6
+      });
+    }
+
+    function animate(){
+      ctx.clearRect(0,0,w,h);
+      for(const b of balls){
+        const grad=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+        grad.addColorStop(0,`rgba(255,150,200,${b.alpha})`);
+        grad.addColorStop(1,"rgba(255,150,200,0)");
+        ctx.fillStyle=grad;
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
+        ctx.fill();
+
+        b.x+=b.dx; b.y+=b.dy;
+        if(b.x< -50) b.x=w+50;
+        if(b.x>w+50) b.x=-50;
+        if(b.y< -50) b.y=h+50;
+        if(b.y>h+50) b.y=-50;
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

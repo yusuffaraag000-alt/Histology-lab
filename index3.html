@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Digestive System — Veterinary Histology</title>
+  <style>
+    :root{
+      --bg:#08050d;
+      --accent1:#ff8fc3;
+      --accent2:#f3b5ff;
+      --muted:#d8cde3;
+    }
+
+    html,body{
+      margin:0;
+      height:100%;
+      font-family:"Poppins",sans-serif;
+      background:var(--bg);
+      color:#fff;
+      overflow:hidden;
+    }
+
+    canvas#bgCanvas{
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      background:radial-gradient(circle at 30% 20%,#14081f,#08050d);
+    }
+
+    header{
+      text-align:center;
+      padding:40px 20px 10px;
+    }
+    header h1{
+      font-size:36px;
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      margin-bottom:10px;
+    }
+    header p{
+      color:var(--muted);
+      font-size:15px;
+      max-width:700px;
+      margin:auto;
+      line-height:1.6;
+    }
+
+    /* === Mind Map === */
+    #mindmap{
+      position:relative;
+      width:900px;
+      height:650px;
+      margin:60px auto;
+    }
+
+    .node{
+      position:absolute;
+      text-align:center;
+    }
+
+    .bubble{
+      width:130px;
+      height:130px;
+      border-radius:50%;
+      background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.2),rgba(255,255,255,0.05));
+      border:2px solid rgba(255,255,255,0.06);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      box-shadow:0 0 25px rgba(255,130,200,0.2), inset 0 0 15px rgba(255,255,255,0.05);
+      cursor:pointer;
+      transition:.3s;
+    }
+
+    .bubble:hover{
+      transform:scale(1.07);
+      background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.3),rgba(255,255,255,0.1));
+    }
+
+    .bubble strong{
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      font-size:17px;
+      font-weight:600;
+    }
+
+    .label{
+      margin-top:8px;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .link-line{
+      position:absolute;
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      height:2px;
+      transform-origin:0 50%;
+      opacity:0.4;
+      filter:blur(1px);
+    }
+
+    /* Layout Positions */
+    .center{left:50%;top:50%;transform:translate(-50%,-50%)}
+    .pos-tl{left:10%;top:20%}
+    .pos-tr{right:10%;top:20%}
+    .pos-lt{left:25%;top:10%}
+    .pos-rt{right:25%;top:10%}
+    .pos-lb{left:25%;bottom:10%}
+    .pos-rb{right:25%;bottom:10%}
+    .pos-bl{left:10%;bottom:25%}
+    .pos-br{right:10%;bottom:25%}
+
+    footer{
+      text-align:center;
+      padding:30px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    @media(max-width:900px){
+      #mindmap{width:100%;height:550px}
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bgCanvas"></canvas>
+
+  <header>
+    <h1>Digestive System — Veterinary Histology</h1>
+    <p>Explore the microscopic anatomy of the digestive system in animals — from oral cavity to intestines, revealing specialized tissues that process, absorb, and transport nutrients.</p>
+  </header>
+
+  <section id="mindmap">
+    <div class="node center">
+      <div class="bubble"><strong onclick="go('overview.html')">Digestive System</strong></div>
+      <div class="label">Main Overview</div>
+    </div>
+
+    <div class="node pos-tl">
+      <div class="bubble"><strong onclick="go('mouth.html')">Mouth</strong></div>
+      <div class="label">Oral Cavity</div>
+    </div>
+
+    <div class="node pos-lt">
+      <div class="bubble"><strong onclick="go('esophagus.html')">Esophagus</strong></div>
+      <div class="label">Transport Tube</div>
+    </div>
+
+    <div class="node pos-tr">
+      <div class="bubble"><strong onclick="go('stomach.html')">Stomach</strong></div>
+      <div class="label">Gastric Regions</div>
+    </div>
+
+    <div class="node pos-br">
+      <div class="bubble"><strong onclick="go('smallintestine.html')">Small Intestine</strong></div>
+      <div class="label">Duodenum • Jejunum • Ileum</div>
+    </div>
+
+    <div class="node pos-rb">
+      <div class="bubble"><strong onclick="go('index4.html')">Large Intestine</strong></div>
+      <div class="label">Cecum • Colon • Rectum</div>
+    </div>
+
+    <div class="node pos-lb">
+      <div class="bubble"><strong onclick="go('liver.html')">Liver</strong></div>
+      <div class="label">Metabolism & Detox</div>
+    </div>
+
+    <div class="node pos-bl">
+      <div class="bubble"><strong onclick="go('pancreas.html')">Pancreas</strong></div>
+      <div class="label">Enzymes & Hormones</div>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 Veterinary Histology Virtual Lab — Digestive System Map
+  </footer>
+
+  <script>
+    function go(p){ window.location.href=p; }
+
+    function connectNodes(){
+      const map=document.getElementById("mindmap");
+      const nodes=map.querySelectorAll(".node");
+      const center=map.querySelector(".center .bubble").getBoundingClientRect();
+      const rect=map.getBoundingClientRect();
+      nodes.forEach(n=>{
+        if(n.classList.contains("center")) return;
+        const b=n.querySelector(".bubble").getBoundingClientRect();
+        const line=document.createElement("div");
+        line.className="link-line";
+        const x1=center.left+center.width/2-rect.left;
+        const y1=center.top+center.height/2-rect.top;
+        const x2=b.left+b.width/2-rect.left;
+        const y2=b.top+b.height/2-rect.top;
+        const dx=x2-x1, dy=y2-y1;
+        const length=Math.sqrt(dx*dx+dy*dy);
+        const angle=Math.atan2(dy,dx)*(180/Math.PI);
+        line.style.width=length+"px";
+        line.style.left=x1+"px";
+        line.style.top=y1+"px";
+        line.style.transform=`rotate(${angle}deg)`;
+        map.appendChild(line);
+      });
+    }
+    window.addEventListener("load",connectNodes);
+
+    // animated glowing background
+    const c=document.getElementById("bgCanvas");
+    const ctx=c.getContext("2d");
+    let w,h;
+    function resize(){w=window.innerWidth;h=window.innerHeight;c.width=w;c.height=h;}
+    window.addEventListener("resize",resize);resize();
+
+    const balls=[];
+    for(let i=0;i<25;i++){
+      balls.push({
+        x:Math.random()*w,
+        y:Math.random()*h,
+        r:10+Math.random()*25,
+        dx:(Math.random()-0.5)*0.6,
+        dy:(Math.random()-0.5)*0.6,
+        alpha:0.2+Math.random()*0.6
+      });
+    }
+
+    function animate(){
+      ctx.clearRect(0,0,w,h);
+      for(const b of balls){
+        const grad=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+        grad.addColorStop(0,`rgba(255,150,200,${b.alpha})`);
+        grad.addColorStop(1,"rgba(255,150,200,0)");
+        ctx.fillStyle=grad;
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
+        ctx.fill();
+        b.x+=b.dx;b.y+=b.dy;
+        if(b.x<-50)b.x=w+50;if(b.x>w+50)b.x=-50;
+        if(b.y<-50)b.y=h+50;if(b.y>h+50)b.y=-50;
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
