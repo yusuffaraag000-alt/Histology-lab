@@ -96,15 +96,6 @@
       margin:60px auto;
     }
 
-    .link-line{
-      position:absolute;
-      background:linear-gradient(90deg,var(--accent1),var(--accent2));
-      height:2px;
-      transform-origin:0 50%;
-      opacity:0.4;
-      filter:blur(1px);
-    }
-
     .node{
       position:absolute;
       text-align:center;
@@ -144,17 +135,6 @@
       color:var(--muted);
     }
 
-    /* positions */
-    .center{left:50%;top:50%;transform:translate(-50%,-50%)}
-    .pos-top{left:50%;top:10%;transform:translate(-50%,0)}
-    .pos-bottom{left:50%;bottom:10%;transform:translate(-50%,0)}
-    .pos-left{left:10%;top:50%;transform:translate(0,-50%)}
-    .pos-right{right:10%;top:50%;transform:translate(0,-50%)}
-    .pos-tl{left:22%;top:20%}
-    .pos-tr{right:22%;top:20%}
-    .pos-bl{left:22%;bottom:20%}
-    .pos-br{right:22%;bottom:20%}
-
     footer{
       text-align:center;
       padding:40px;
@@ -164,6 +144,18 @@
 
     @media(max-width:900px){
       #mindmap{width:100%;height:500px}
+    }
+
+    /* === Mindmap Reveal Animation === */
+    .node:not(.center) {
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.8s ease;
+    }
+
+    .node.show {
+      opacity: 1;
+      transform: scale(1);
     }
   </style>
 </head>
@@ -197,49 +189,19 @@
     <h2>Explore Animal Body Systems</h2>
     <div id="mindmap">
       <div class="node center">
-        <div class="bubble"><strong onclick="go('overview.html')">Animal Body</strong></div>
+        <div class="bubble"><strong>Animal Body</strong></div>
         <div class="label">Tissues & Systems</div>
       </div>
 
-      <div class="node pos-top">
-        <div class="bubble"><strong onclick="go('respiratory.html')">Respiratory</strong></div>
-        <div class="label">Lungs & Air Sacs</div>
-      </div>
-
-      <div class="node pos-bottom">
-        <div class="bubble"><strong onclick="go('immune.html')">Immune</strong></div>
-        <div class="label">Defense Organs</div>
-      </div>
-
-      <div class="node pos-left">
-        <div class="bubble"><strong onclick="go('index3.html')">Digestive</strong></div>
-        <div class="label">GI Tract</div>
-      </div>
-
-      <div class="node pos-right">
-        <div class="bubble"><strong onclick="go('urinary.html')">Urinary</strong></div>
-        <div class="label">Kidneys & Excretion</div>
-      </div>
-
-      <div class="node pos-tl">
-        <div class="bubble"><strong onclick="go('circulatory.html')">Circulatory</strong></div>
-        <div class="label">Heart & Vessels</div>
-      </div>
-
-      <div class="node pos-tr">
-        <div class="bubble"><strong onclick="go('nervous.html')">Nervous</strong></div>
-        <div class="label">Brain & Nerves</div>
-      </div>
-
-      <div class="node pos-bl">
-        <div class="bubble"><strong onclick="go('musculoskeletal.html')">Musculoskeletal</strong></div>
-        <div class="label">Bones & Muscles</div>
-      </div>
-
-      <div class="node pos-br">
-        <div class="bubble"><strong onclick="go('endocrine.html')">Endocrine</strong></div>
-        <div class="label">Glands & Hormones</div>
-      </div>
+      <!-- ثمانية فروع حول الدائرة -->
+      <div class="node"><div class="bubble"><strong onclick="go('respiratory.html')">Respiratory</strong></div><div class="label">Lungs & Air Sacs</div></div>
+      <div class="node"><div class="bubble"><strong onclick="go('immune.html')">Immune</strong></div><div class="label">Defense Organs</div></div>
+      <div class="node"><div class="bubble"><strong onclick="go('index3.html')">Digestive</strong></div><div class="label">GI Tract</div></div>
+      <div class="node"><div class="bubble"><strong onclick="go('urinary.html')">Urinary</strong></div><div class="label">Kidneys & Excretion</div></div>
+      <div class="node"><div class="bubble"><strong onclick="go('circulatory.html')">Circulatory</strong></div><div class="label">Heart & Vessels</div></div>
+      <div class="node"><div class="bubble"><strong onclick="go('nervous.html')">Nervous</strong></div><div class="label">Brain & Nerves</div></div>
+      <div class="node"><div class="bubble"><strong onclick="go('musculoskeletal.html')">Musculoskeletal</strong></div><div class="label">Bones & Muscles</div></div>
+      <div class="node"><div class="bubble"><strong onclick="go('endocrine.html')">Endocrine</strong></div><div class="label">Glands & Hormones</div></div>
     </div>
   </section>
 
@@ -250,34 +212,7 @@
   <script>
     function go(p){ window.location.href=p; }
 
-    function connectNodes(){
-      const map=document.getElementById("mindmap");
-      const nodes=map.querySelectorAll(".node");
-      const center=map.querySelector(".center .bubble").getBoundingClientRect();
-      const rect=map.getBoundingClientRect();
-      nodes.forEach(n=>{
-        if(n.classList.contains("center")) return;
-        const b=n.querySelector(".bubble").getBoundingClientRect();
-        const line=document.createElement("div");
-        line.className="link-line";
-        const x1=center.left+center.width/2-rect.left;
-        const y1=center.top+center.height/2-rect.top;
-        const x2=b.left+b.width/2-rect.left;
-        const y2=b.top+b.height/2-rect.top;
-        const dx=x2-x1, dy=y2-y1;
-        const length=Math.sqrt(dx*dx+dy*dy);
-        const angle=Math.atan2(dy,dx)*(180/Math.PI);
-        line.style.width=length+"px";
-        line.style.left=x1+"px";
-        line.style.top=y1+"px";
-        line.style.transform=`rotate(${angle}deg)`;
-        map.appendChild(line);
-      });
-    }
-
-    window.addEventListener("load",connectNodes);
-
-    // glowing spheres background
+    // الخلفية المتحركة (الكرات)
     const c=document.getElementById("bgCanvas");
     const ctx=c.getContext("2d");
     let w,h;
@@ -320,6 +255,38 @@
       requestAnimationFrame(animate);
     }
     animate();
+
+    // توزيع الأزرار في شكل دائرة حول المركز
+    window.addEventListener("load", () => {
+      const map = document.getElementById("mindmap");
+      const nodes = map.querySelectorAll(".node:not(.center)");
+      const radius = 250;
+      const centerX = map.clientWidth / 2;
+      const centerY = map.clientHeight / 2;
+
+      nodes.forEach((node, i) => {
+        const angle = (i / nodes.length) * 2 * Math.PI;
+        const x = centerX + radius * Math.cos(angle) - 70;
+        const y = centerY + radius * Math.sin(angle) - 70;
+        node.style.left = `${x}px`;
+        node.style.top = `${y}px`;
+      });
+    });
+
+    // ظهور المايند ماب مرة واحدة فقط
+    const centerNode = document.querySelector(".center .bubble");
+    const allNodes = document.querySelectorAll("#mindmap .node:not(.center)");
+    let revealed = false;
+
+    centerNode.addEventListener("click", () => {
+      if (revealed) return;
+      revealed = true;
+      allNodes.forEach((n, i) => {
+        setTimeout(() => {
+          n.classList.add("show");
+        }, i * 180);
+      });
+    });
   </script>
 </body>
 </html>
